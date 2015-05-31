@@ -23,8 +23,8 @@ try:
 except NameError:
     from sets import Set as set
 
-from pdfrw.objects import PdfName, PdfArray, PdfDict, IndirectPdfDict
-from pdfrw.objects import PdfObject, PdfString
+from pdfrw.objects import (PdfName, PdfArray, PdfDict, IndirectPdfDict,
+                           PdfObject, PdfString)
 from pdfrw.compress import compress as do_compress
 from pdfrw.errors import PdfOutputError, log
 
@@ -39,7 +39,8 @@ def FormatObjects(f, trailer, version='1.3', compress=True, killobj=(),
                   hasattr=hasattr, repr=repr, enumerate=enumerate,
                   list=list, dict=dict, tuple=tuple,
                   do_compress=do_compress, PdfArray=PdfArray,
-                  PdfDict=PdfDict, PdfObject=PdfObject, encode=PdfString.encode):
+                  PdfDict=PdfDict, PdfObject=PdfObject,
+                  encode=PdfString.encode):
     ''' FormatObjects performs the actual formatting and disk write.
         Should be a class, was a class, turned into nested functions
         for performace (to reduce attribute lookups).
@@ -60,9 +61,9 @@ def FormatObjects(f, trailer, version='1.3', compress=True, killobj=(),
 
         if not indirect:
             if objid in visited:
-                log.warning(('Replicating direct %s object,'
-                            ' should be indirect for optimal file size')
-                            % type(obj))
+                log.warning('Replicating direct %s object, '
+                            'should be indirect for optimal file size' %
+                            type(obj))
                 obj = type(obj)(obj)
                 objid = id(obj)
             visiting(objid)
@@ -132,7 +133,8 @@ def FormatObjects(f, trailer, version='1.3', compress=True, killobj=(),
                     result = format_array(myarray, '<<%s>>')
                     stream = obj.stream
                     if stream is not None:
-                        result = '%s\nstream\n%s\nendstream' % (result, stream)
+                        result = ('%s\nstream\n%s\nendstream' %
+                                  (result, stream))
                     return result
                 obj = (PdfArray, PdfDict)[isinstance(obj, dict)](obj)
                 continue
@@ -162,12 +164,11 @@ def FormatObjects(f, trailer, version='1.3', compress=True, killobj=(),
     # Don't reference old catalog or pages objects --
     # swap references to new ones.
     swapobj = {PdfName.Catalog: trailer.Root,
-               PdfName.Pages: trailer.Root.Pages,
-               None: trailer}.get
-    swapobj = [(objid, swapobj(obj.Type)) for objid, obj in
-               killobj.iteritems()]
-    swapobj = dict((objid, obj is None and NullObject or obj) for objid, obj in
-                   swapobj).get
+               PdfName.Pages: trailer.Root.Pages, None: trailer}.get
+    swapobj = [(objid, swapobj(obj.Type))
+               for objid, obj in killobj.iteritems()]
+    swapobj = dict((objid, obj is None and NullObject or obj)
+                   for objid, obj in swapobj).get
 
     for objid in killobj:
         assert swapobj(objid) is not None
@@ -243,6 +244,8 @@ class PdfWriter(object):
             killobj[objid] = obj
             obj = obj.Parent
         return self
+
+    addPage = addpage  # for compatibility with pyPdf
 
     def addpages(self, pagelist):
         for page in pagelist:

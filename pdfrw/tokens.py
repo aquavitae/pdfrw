@@ -37,8 +37,8 @@ class PdfTokens(object):
 
     # "normal" stuff is all but delimiters or whitespace.
 
-    p_normal = r'(?:[^\\%s%s]+|\\[^%s])+' % (whitespace,
-                                             delimiters, whitespace)
+    p_normal = r'(?:[^\\%s%s]+|\\[^%s])+' % (whitespace, delimiters,
+                                             whitespace)
 
     p_comment = r'\%%[^%s]*' % eol
 
@@ -59,10 +59,10 @@ class PdfTokens(object):
 
     pattern = '|'.join([p_normal, p_name, p_hex_string, p_dictdelim,
                         p_literal_string, p_comment, p_catchall])
-    findtok = re.compile('(%s)[%s]*' %
-                        (pattern, whitespace), re.DOTALL).finditer
-    findparen = re.compile('(%s)[%s]*' %
-                          (p_literal_string_extend, whitespace), re.DOTALL).finditer
+    findtok = re.compile('(%s)[%s]*' % (pattern, whitespace),
+                         re.DOTALL).finditer
+    findparen = re.compile('(%s)[%s]*' % (p_literal_string_extend,
+                                          whitespace), re.DOTALL).finditer
     splitname = re.compile(r'\#([0-9A-Fa-f]{2})').split
 
     def _cacheobj(cache, obj, constructor):
@@ -92,8 +92,9 @@ class PdfTokens(object):
         result.encoded = token
         return result
 
-    def _gettoks(self, startloc, cacheobj=_cacheobj, delimiters=delimiters,
-                 findtok=findtok, findparen=findparen, PdfString=PdfString,
+    def _gettoks(self, startloc, cacheobj=_cacheobj,
+                 delimiters=delimiters, findtok=findtok,
+                 findparen=findparen, PdfString=PdfString,
                  PdfObject=PdfObject):
         ''' Given a source data string and a location inside it,
             gettoks generates tokens.  Each token is a tuple of the form:
@@ -148,10 +149,11 @@ class PdfTokens(object):
                             token = fdata[m_start:loc]
                             current[0] = m_start, match.end()
                             if nest:
-                                # There is one possible recoverable error seen in
-                                # the wild -- some stupid generators don't escape (.
-                                # If this happens, just terminate on first unescaped ).
-                                # The string won't be quite right, but that's a science
+                                # There is one possible recoverable error
+                                # seen in the wild -- some stupid generators
+                                # don't escape (.  If this happens, just
+                                # terminate on first unescaped ). The string
+                                # won't be quite right, but that's a science
                                 # fair project for another time.
                                 (self.error, self.exception)[not ends](
                                     'Unterminated literal string')
@@ -164,8 +166,8 @@ class PdfTokens(object):
                         if self.strip_comments:
                             continue
                     else:
-                        self.exception(('Tokenizer logic incorrect --'
-                                        ' should never get here'))
+                        self.exception(('Tokenizer logic incorrect -- '
+                                        'should never get here'))
 
                 yield token
                 if current[0] is not tokspan:
@@ -225,8 +227,8 @@ class PdfTokens(object):
             tok = fdata[begin:end].rstrip()
             if len(tok) > 30:
                 tok = tok[:26] + ' ...'
-            return '%s (line=%d, col=%d, token=%s)' % \
-                (msg, line, col, repr(tok))
+            return ('%s (line=%d, col=%d, token=%s)' %
+                    (msg, line, col, repr(tok)))
         return '%s (line=%d, col=%d)' % (msg, line, col)
 
     def warning(self, *arg):

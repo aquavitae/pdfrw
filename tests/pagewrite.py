@@ -8,7 +8,7 @@ import time
 import gc
 import hashlib
 
-#gc.disable()
+# gc.disable()
 
 sys.path.insert(0, '../../PyPDF2/')
 
@@ -22,7 +22,8 @@ import find_pdfrw
 from pdfrw import PdfReader, PdfWriter, PdfParseError
 
 
-allfiles = (x.split('#',1)[0] for x in open('data/allpdfs.txt').read().splitlines())
+allfiles = (x.split('#', 1)[0] for x in
+            open('data/allpdfs.txt').read().splitlines())
 allfiles = [x for x in allfiles if x]
 
 badfiles = []
@@ -41,6 +42,7 @@ else:
     reader, writer = pdfrw.PdfReader, pdfrw.PdfWriter
 pdferr = pdfrw.PdfParseError
 
+
 def test_pdf(pdfname):
     outfn = os.path.join(outdir, hashlib.md5(pdfname).hexdigest() + '.pdf')
     pdf_in = reader(open(pdfname))
@@ -53,7 +55,7 @@ def test_pdf(pdfname):
 
 try:
     for fname in allfiles:
-        #print >> sys.stderr, "File name", fname
+        # print >> sys.stderr, "File name", fname
         print "File name", fname
         sys.stdout.flush()
         start = time.time()
@@ -66,7 +68,7 @@ try:
                 print '[ERROR]', s
             else:
                 print traceback.format_exc()[-2000:]
-            #raise
+            # raise
         else:
             sys.stderr.flush()
             ok = True
@@ -80,13 +82,23 @@ except KeyboardInterrupt:
     raise
     pass
 
-print "Total = %s, good = %s, bad = %s" % (len(times), len(goodfiles), len(badfiles))
+print "Total = %s, good = %s, bad = %s" % (
+        len(times), len(goodfiles), len(badfiles))
 
 times.sort()
 times.reverse()
 
 f = open('log.txt', 'a')
-print >> f, '\n\n\n\n\n\n***************************************************************************\n\n\n'
+print >> f, """
+
+
+
+
+
+***************************************************************************
+
+
+"""
 for fname in goodfiles:
     print >> f, 'good', fname
 print >> f

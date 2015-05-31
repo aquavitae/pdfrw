@@ -76,7 +76,8 @@ class PdfReader(PdfDict):
                 tok = next()
                 if value.isdigit() and tok.isdigit():
                     if next() != 'R':
-                        source.exception('Expected "R" following two integers')
+                        source.exception(
+                            'Expected "R" following two integers')
                     value = self.findindirect(value, tok)
                     tok = next()
             result[key] = value
@@ -93,7 +94,8 @@ class PdfReader(PdfDict):
         '''
         source.exception('Unexpected delimiter')
 
-    def findstream(self, obj, tok, source, PdfDict=PdfDict, isinstance=isinstance, len=len):
+    def findstream(self, obj, tok, source, PdfDict=PdfDict,
+                   isinstance=isinstance, len=len):
         ''' Figure out if there is a content stream
             following an object, and return the start
             pointer to the content stream if so.
@@ -134,7 +136,8 @@ class PdfReader(PdfDict):
         # The length attribute does not match the distance between the
         # stream and endstream keywords.
 
-        do_warn, self.warned_bad_stream_end = self.warned_bad_stream_end, False
+        do_warn, self.warned_bad_stream_end = (self.warned_bad_stream_end,
+                                               False)
 
         # TODO:  Extract maxstream from dictionary of object offsets
         # and use rfind instead of find.
@@ -152,13 +155,13 @@ class PdfReader(PdfDict):
             return
         source.floc = endstream
         if length > room:
-            source.error('stream /Length attribute (%d) appears ' +
-                         'to be too big (size %d) -- adjusting',
+            source.error('stream /Length attribute (%d) appears to '
+                         'be too big (size %d) -- adjusting',
                          length, room)
             obj.stream = fdata[startstream:endstream]
             return
         if fdata[target_endstream:endstream].rstrip():
-            source.error('stream /Length attribute (%d) might be ' +
+            source.error('stream /Length attribute (%d) might be '
                          'smaller than data size (%d)',
                          length, room)
             return
@@ -200,8 +203,8 @@ class PdfReader(PdfDict):
                     fdata.find(fdata[offset2 - 1] + objheader, offset2) > 0):
                 source.warning("Expected indirect object '%s'" % objheader)
                 return None
-            source.warning(("Indirect object %s found at incorrect" +
-                            "offset %d (expected offset %d)") %
+            source.warning("Indirect object %s found at incorrect "
+                           "offset %d (expected offset %d)" %
                            (objheader, offset2, offset))
             source.floc = offset2 + len(objheader)
 
@@ -270,7 +273,8 @@ class PdfReader(PdfDict):
         except:
             pass
         try:
-        # Table formatted incorrectly.  See if we can figure it out anyway.
+            # Table formatted incorrectly.  See if
+            # we can figure it out anyway.
             end = source.fdata.rindex('trailer', start)
             table = source.fdata[start:end].splitlines()
             for line in table:
@@ -323,7 +327,8 @@ class PdfReader(PdfDict):
             log.error('Invalid page tree: %s' % s)
             return []
 
-    def __init__(self, fname=None, fdata=None, decompress=False, disable_gc=True):
+    def __init__(self, fname=None, fdata=None, decompress=False,
+                 disable_gc=True):
 
         # Runs a lot faster with GC off.
         disable_gc = disable_gc and gc.isenabled()
@@ -341,8 +346,8 @@ class PdfReader(PdfDict):
                         fdata = f.read()
                         f.close()
                     except IOError:
-                        raise PdfParseError(
-                            'Could not read PDF file %s' % fname)
+                        raise PdfParseError('Could not read PDF file %s' %
+                                            fname)
 
             assert fdata is not None
             if not fdata.startswith('%PDF-'):
@@ -353,13 +358,13 @@ class PdfReader(PdfDict):
                     lines = fdata.lstrip().splitlines()
                     if not lines:
                         raise PdfParseError('Empty PDF file!')
-                    raise PdfParseError(
-                        'Invalid PDF header: %s' % repr(lines[0]))
+                    raise PdfParseError('Invalid PDF header: %s' %
+                                        repr(lines[0]))
 
             endloc = fdata.rfind('%EOF')
             if endloc < 0:
-                raise PdfParseError(
-                    'EOF mark not found: %s' % repr(fdata[-20:]))
+                raise PdfParseError('EOF mark not found: %s' %
+                                    repr(fdata[-20:]))
             endloc += 6
             junk = fdata[endloc:]
             fdata = fdata[:endloc]

@@ -19,7 +19,8 @@ def streamobjects(mylist, isinstance=isinstance, PdfDict=PdfDict):
 
 
 def uncompress(mylist, warnings=set(), flate=PdfName.FlateDecode,
-               decompress=zlib.decompressobj, isinstance=isinstance, list=list, len=len):
+               decompress=zlib.decompressobj, isinstance=isinstance,
+               list=list, len=len):
     ok = True
     for obj in streamobjects(mylist):
         ftype = obj.Filter
@@ -30,7 +31,8 @@ def uncompress(mylist, warnings=set(), flate=PdfName.FlateDecode,
             ftype = ftype[0]
         parms = obj.DecodeParms
         if ftype != flate or parms is not None:
-            msg = 'Not decompressing: cannot use filter %s with parameters %s' % (repr(ftype), repr(parms))
+            msg = ('Not decompressing: cannot use filter %s '
+                   'with parameters %s' % (repr(ftype), repr(parms)))
             if msg not in warnings:
                 warnings.add(msg)
                 log.warning(msg)
@@ -45,8 +47,8 @@ def uncompress(mylist, warnings=set(), flate=PdfName.FlateDecode,
             if error is None:
                 assert not dco.unconsumed_tail
                 if dco.unused_data.strip():
-                    error = 'Unconsumed compression data: %s' % repr(
-                        dco.unused_data[:20])
+                    error = ('Unconsumed compression data: %s' %
+                             repr(dco.unused_data[:20]))
             if error is None:
                 obj.Filter = None
                 obj.stream = data

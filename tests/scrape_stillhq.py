@@ -14,7 +14,8 @@ if not dirs:
 Usage:
 
 1) Go to http://www.stillhq.com/pdfdb/db.html
-2) Copy the list of documents you want (e.g. under "all documents" at the bottom)
+2) Copy the list of documents you want
+        (e.g. under "all documents" at the bottom)
 3) Paste that list onto the command line.
 ''')
 
@@ -24,7 +25,8 @@ for d in dirs:
     files.append(d + 'info.html')
     files.append(d + 'data.pdf')
 
-prefix = '/usr/bin/wget -N --force-directories --directory-prefix=data --limit-rate=500k'.split()
+prefix = ('/usr/bin/wget -N --force-directories '
+          '--directory-prefix=data --limit-rate=500k'.split())
 while files:
     shortlist = files[-8:]
     del files[-8:]
